@@ -8,8 +8,8 @@ from app.models.base import BaseModel
 
 class UserRole(str, enum.Enum):
     """用户角色"""
-    ADMIN = "admin"  # 管理员
-    OPERATOR = "operator"  # 操作员
+    ADMIN = "ADMIN"  # 管理员
+    OPERATOR = "OPERATOR"  # 操作员
 
 
 class User(BaseModel):

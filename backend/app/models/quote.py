@@ -9,10 +9,10 @@ from app.models.base import BaseModel
 
 class QuoteStatus(str, enum.Enum):
     """报价单状态"""
-    DRAFT = "draft"  # 草稿
-    SENT = "sent"  # 已发送
-    CONFIRMED = "confirmed"  # 已确认
-    EXPIRED = "expired"  # 已过期
+    DRAFT = "DRAFT"  # 草稿
+    SENT = "SENT"  # 已发送
+    CONFIRMED = "CONFIRMED"  # 已确认
+    EXPIRED = "EXPIRED"  # 已过期
 
 
 class Quote(BaseModel):

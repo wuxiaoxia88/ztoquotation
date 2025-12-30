@@ -8,9 +8,9 @@ from app.models.base import BaseModel
 
 class TemplateType(str, enum.Enum):
     """模板类型"""
-    TONGPIAO = "tongpiao"  # 通票
-    DAKEHU = "dakehu"  # 大客户
-    CANGPEI = "cangpei"  # 仓配
+    TONGPIAO = "TONGPIAO"  # 通票
+    DAKEHU = "DAKEHU"  # 大客户
+    CANGPEI = "CANGPEI"  # 仓配
 
 
 class Template(BaseModel):
