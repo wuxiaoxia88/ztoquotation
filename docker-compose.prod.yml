@@ -1,70 +1,75 @@
 version: '3.8'
 
+# 生产环境 Docker Compose 配置
 services:
   # PostgreSQL 数据库
   db:
     image: postgres:18-alpine
-    container_name: zto-quote-db
-    restart: unless-stopped
+    container_name: zto-quote-db-prod
+    restart: always
     environment:
       POSTGRES_DB: zto_quote
       POSTGRES_USER: zto_user
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-zto_password_change_me}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - ./backups:/backups
     networks:
       - zto-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U zto_user -d zto_quote"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # 后端服务
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: zto-quote-backend
-    restart: unless-stopped
+    container_name: zto-quote-backend-prod
+    restart: always
     environment:
-      DATABASE_URL: postgresql://zto_user:${DB_PASSWORD:-zto_password_change_me}@db:5432/zto_quote
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-please-change-in-production}
+      DATABASE_URL: postgresql://zto_user:${DB_PASSWORD}@db:5432/zto_quote
+      SECRET_KEY: ${SECRET_KEY}
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 43200
+      ENVIRONMENT: production
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "8002:8002"
     networks:
       - zto-network
-    volumes:
-      - ./backend:/app
     command: >
       sh -c "
-        echo 'Waiting for database...' &&
-        sleep 5 &&
         alembic upgrade head &&
-        uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+        uvicorn app.main:app --host 0.0.0.0 --port 8002 --workers 4
       "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # 前端服务
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: zto-quote-frontend
-    restart: unless-stopped
+    container_name: zto-quote-frontend-prod
+    restart: always
     depends_on:
       - backend
     ports:
       - "80:80"
+      - "443:443"
     networks:
       - zto-network
+    volumes:
+      - ./ssl:/etc/nginx/ssl:ro  # SSL证书 (如需HTTPS)
 
 networks:
   zto-network:

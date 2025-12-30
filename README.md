@@ -48,16 +48,58 @@
 
 ## 🛠️ 快速开始
 
-### 1. 克隆项目
+### 方式一: Docker 部署 (推荐)
+
+#### 1. 安装 Docker
+
+请参考 [Docker 官方文档](https://docs.docker.com/engine/install/) 安装 Docker 和 Docker Compose。
+
+#### 2. 克隆项目并配置
+
+```bash
+git clone https://github.com/wuxiaoxia88/ztoquotation.git
+cd ztoquotation/zto-quote-system
+
+# 配置环境变量
+cp .env.example .env
+nano .env  # 修改数据库密码和JWT密钥
+```
+
+#### 3. 一键启动
+
+```bash
+# 使用部署脚本
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+
+# 或手动启动
+docker compose up -d
+```
+
+#### 4. 访问系统
+
+- 前端: http://localhost
+- 后端API: http://localhost:8002
+- API文档: http://localhost:8002/docs
+
+默认账号:
+- 用户名: `admin`
+- 密码: `admin123`
+
+详细部署文档请查看 [DEPLOYMENT.md](docs/DEPLOYMENT.md)
+
+### 方式二: 手动部署
+
+#### 1. 克隆项目
 
 \`\`\`bash
 git clone https://github.com/wuxiaoxia88/ztoquotation.git
 cd ztoquotation/zto-quote-system
 \`\`\`
 
-### 2. 环境配置
+#### 2. 环境配置
 
-#### 后端配置
+##### 后端配置
 
 \`\`\`bash
 cd backend
@@ -84,7 +126,7 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=43200
 \`\`\`
 
-#### 前端配置
+##### 前端配置
 
 \`\`\`bash
 cd frontend
@@ -93,9 +135,9 @@ cd frontend
 npm install
 \`\`\`
 
-### 3. 启动服务
+#### 3. 启动服务
 
-#### 启动后端
+##### 启动后端
 
 \`\`\`bash
 cd backend
@@ -105,7 +147,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8002
 后端服务: http://localhost:8002
 API文档: http://localhost:8002/docs
 
-#### 启动前端
+##### 启动前端
 
 \`\`\`bash
 cd frontend
@@ -114,11 +156,40 @@ npm run dev
 
 前端服务: http://localhost:1111
 
-### 4. 登录系统
+#### 4. 登录系统
 
 默认账号:
 - 用户名: \`admin\`
 - 密码: \`admin123\`
+
+## 🐳 Docker 命令
+
+```bash
+# 查看服务状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+
+# 重启服务
+docker compose restart
+
+# 进入容器
+docker compose exec backend bash
+docker compose exec frontend sh
+
+# 数据库备份
+./scripts/backup.sh
+
+# 数据库恢复
+./scripts/restore.sh backups/zto_quote_20250130_020000.sql.gz
+
+# 健康检查
+./scripts/health-check.sh
+```
 
 ## 📱 功能说明
 
