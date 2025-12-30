@@ -4,7 +4,7 @@ FastAPI主应用
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
-from app.api import auth, users, quoters, base
+from app.api import auth, users, quoters, base, templates
 
 settings = get_settings()
 
@@ -31,6 +31,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(quoters.router)
 app.include_router(base.router)
+app.include_router(templates.router)
 
 
 @app.get("/")
