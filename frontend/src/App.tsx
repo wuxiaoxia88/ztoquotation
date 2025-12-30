@@ -1,27 +1,35 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from './stores';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import MainLayout from './components/Layout/MainLayout';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>中通快递智能报价系统</h1>
-        <p>ZTO Express Quotation System</p>
-        <div style={{ marginTop: '2rem' }}>
-          <button onClick={() => setCount((count) => count + 1)}>
-            测试计数: {count}
-          </button>
-        </div>
-        <div style={{ marginTop: '2rem', fontSize: '14px', color: '#666' }}>
-          <p>✅ 前端已启动 (端口1111)</p>
-          <p>✅ Vite + React 18 + TypeScript</p>
-          <p>⏳ 等待后端开发...</p>
-        </div>
-      </header>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        
+        {/* 受保护的路由 */}
+        <Route
+          path="/*"
+          element={
+            isAuthenticated ? (
+              <MainLayout />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          {/* 更多路由将在后续添加 */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
