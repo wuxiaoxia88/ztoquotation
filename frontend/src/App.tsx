@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import QuoteList from './pages/Quote/List';
 import QuoteDetail from './pages/Quote/Detail';
 import QuoteCreate from './pages/Quote/Create';
+import TemplateManage from './pages/Template';
+import QuotersManage from './pages/Settings/Quoters';
 import MainLayout from './components/Layout/MainLayout';
 
 function App() {
@@ -31,7 +33,8 @@ function App() {
           <Route path="quotes" element={<QuoteList />} />
           <Route path="quotes/create" element={<QuoteCreate />} />
           <Route path="quotes/:id" element={<QuoteDetail />} />
-          {/* 更多路由将在后续添加 */}
+          <Route path="templates" element={<TemplateManage />} />
+          <Route path="settings/quoters" element={<QuotersManage />} />
         </Route>
       </Routes>
     </BrowserRouter>
